@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/widget_text.dart';
+
 class MainOfficer extends StatelessWidget {
   const MainOfficer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: WidgetText(text: 'Officer'),
+      ),
+    );
   }
 }
