@@ -13,6 +13,7 @@ import 'package:mennofficer/widgets/widget_form.dart';
 import 'package:mennofficer/widgets/widget_icon_button.dart';
 import 'package:mennofficer/widgets/widget_image.dart';
 import 'package:mennofficer/widgets/widget_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Authen extends StatefulWidget {
   const Authen({super.key});
@@ -149,7 +150,7 @@ class _AuthenState extends State<Authen> {
     String urlAPI =
         'https://www.androidthai.in.th/fluttertraining/getUserWhereUserMenn.php?isAdd=true&user=$user';
 
-    await Dio().get(urlAPI).then((value) {
+    await Dio().get(urlAPI).then((value) async {
       print('value = $value');
 
       if (value.toString() == 'null') {
@@ -168,20 +169,34 @@ class _AuthenState extends State<Authen> {
             //Prassword true
             String type = model.type;
             print('type = $type');
-            switch (type) {
-              case 'boss':
-                Navigator.pushNamedAndRemoveUntil(
-                    context, MyConstant.routeBoss, (route) => false);
-                break;
-              case 'officer':
-                Navigator.pushNamedAndRemoveUntil(
-                    context, MyConstant.routeoOfficer, (route) => false);
-                break;
-              default:
-                Navigator.restorablePushNamedAndRemoveUntil(
-                    context, MyConstant.routeoOfficer, (route) => false);
-                break;
-            }
+
+            var datas = <String>[];
+            datas.add(model.id);
+            datas.add(model.type);
+            datas.add(model.name);
+            datas.add(model.user);
+            datas.add(model.password);
+
+            print('Datas = $datas');
+
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            preferences.setStringList('data', datas).then((value) {
+              switch (type) {
+                case 'boss':
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MyConstant.routeBoss, (route) => false);
+                  break;
+                case 'officer':
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MyConstant.routeoOfficer, (route) => false);
+                  break;
+                default:
+                  Navigator.restorablePushNamedAndRemoveUntil(
+                      context, MyConstant.routeoOfficer, (route) => false);
+                  break;
+              }
+            });
           } else {
             //Password false
             MyDialog(context: context).normalDialog(

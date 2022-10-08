@@ -13,6 +13,8 @@ Map<String, WidgetBuilder> map = {
   MyConstant.routeoOfficer: (context) => const MainOfficer(),
 };
 
+String? firstState;
+
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverride();
 // make sure thread done first before other function
@@ -21,6 +23,22 @@ Future<void> main() async {
 
   var result = preferences.getStringList('data');
   print('result main = $result');
+
+  if (result != null) {
+    var datas = <String>[];
+    datas.addAll(result);
+    switch (datas[1]) {
+      case 'boss':
+        firstState = MyConstant.routeBoss;
+        break;
+      case 'officer':
+        firstState = MyConstant.routeoOfficer;
+        break;
+      default:
+        firstState = MyConstant.routeAuthen;
+        break;
+    }
+  } else {}
 
   runApp(const MyApp());
 }
@@ -32,7 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: map,
-      initialRoute: MyConstant.routeAuthen,
+      initialRoute: firstState ?? MyConstant.routeAuthen,
     );
   }
 }

@@ -8,25 +8,26 @@ class WidgetListTile extends StatelessWidget {
   final Widget leadWidget;
   final String title;
   final String subTitle;
+  final Function()? tabFunc;
+  
 
   const WidgetListTile({
     Key? key,
     required this.leadWidget,
     required this.title,
     required this.subTitle,
+    this.tabFunc,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return ListTile( onTap: tabFunc,
       leading: leadWidget,
       title: WidgetText(
         text: title,
         textStyle: MyConstant().h2Style(),
       ),
-      subtitle: WidgetText(
-        text: subTitle,
-      ),
+      subtitle: WidgetText(text: subTitle),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mennofficer/widgets/widget_sign_out.dart';
 
 import '../widgets/widget_text.dart';
 
@@ -12,6 +13,7 @@ class MainOfficer extends StatelessWidget {
         centerTitle: true,
         title: WidgetText(text: 'Officer'),
       ),
+      drawer: Drawer(child: WidgetSignOut(),),
     );
   }
 }
