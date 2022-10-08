@@ -11,6 +11,7 @@ class WidgetSignOut extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        Divider(color: MyConstant.dark),
         WidgetListTile(
           leadWidget: Icon(
             Icons.exit_to_app,
