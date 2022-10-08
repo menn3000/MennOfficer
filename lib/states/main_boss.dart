@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:mennofficer/bodys/list_job.dart';
 import 'package:mennofficer/bodys/list_officer.dart';
 import 'package:mennofficer/bodys/news.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
@@ -23,7 +24,7 @@ class MainBoss extends StatefulWidget {
 class _MainBossState extends State<MainBoss> {
   var bodys = <Widget>[];
   int indexBody = 0;
-  var title = <String>['List Officer', 'News'];
+  var title = <String>['List job','List Officer', 'News'];
 
   var datas = <String>[];
 
@@ -35,6 +36,7 @@ class _MainBossState extends State<MainBoss> {
 
   Future<void> findUserLogin() async {
     datas = await MyService().findDatas();
+    bodys.add(const ListJob());
     bodys.add(const ListOfficer());
     bodys.add(
       News(nameLogin: datas[2]),
@@ -64,16 +66,38 @@ class _MainBossState extends State<MainBoss> {
                   datas: datas,
                   type: 'Boss',
                 ),
-                WidgetListTile(
+                 WidgetListTile(
+                    tabFunc: () {
+                      indexBody = 0;
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
                     leadWidget: const WidgetImage(path: 'images/list.png'),
                     title: title[0],
+                    subTitle: 'List Job'),
+                Divider(color: MyConstant.dark),
+                WidgetListTile(
+                    tabFunc: () {
+                      indexBody = 1;
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
+                    leadWidget: const WidgetImage(path: 'images/list.png'),
+                    title: title[1],
                     subTitle: 'List Officer in my response'),
                 Divider(color: MyConstant.dark),
                 WidgetListTile(
+                    tabFunc: () {
+                      indexBody = 2;
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
                     leadWidget: const WidgetImage(path: 'images/news.png'),
-                    title: title[1],
+                    title: title[2],
                     subTitle: 'News for you'),
                 Divider(color: MyConstant.dark),
+
+
               ],
             ),
           ],
