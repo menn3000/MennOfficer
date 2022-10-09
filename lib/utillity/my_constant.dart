@@ -13,6 +13,13 @@ class MyConstant {
 
   //Method
 
+  BoxDecoration curvBox() {
+    return BoxDecoration(
+      border: Border.all(color: MyConstant.dark),
+      borderRadius: BorderRadius.circular(10),
+    );
+  }
+
   BoxDecoration imageBox() {
     return const BoxDecoration(
       image: DecorationImage(
