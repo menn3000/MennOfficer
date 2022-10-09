@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
 import 'package:mennofficer/utillity/my_service.dart';
 import 'package:mennofficer/widgets/widget_form.dart';
@@ -18,11 +19,15 @@ class AddJob extends StatefulWidget {
 class _AddJobState extends State<AddJob> {
   Position? position;
   bool load = true;
-
+  Map<MarkerId, Marker> markerMap = {};
+  BitmapDescriptor? bitmapDescriptor;
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
+      //create icon for Google Marker
+      createIconMarker();
+
       // use this method to get context in the iniState which normally do not have
       findPosition(context: context);
     });
@@ -39,8 +44,7 @@ class _AddJobState extends State<AddJob> {
             textStyle: MyConstant().h2Style(),
           )),
       body: LayoutBuilder(builder: (context, BoxConstraints boxConstraints) {
-        return ListView(
-          // like column
+        return Column(
           children: [
             makeCenter(boxConstraints,
                 widget: WidgetForm(
@@ -60,11 +64,36 @@ class _AddJobState extends State<AddJob> {
               widget: Container(
                 height: boxConstraints.maxHeight * 0.6,
                 decoration: MyConstant().curvBox(),
-                child:  Padding(
+                child: Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: load? WidgetProgress() : WidgetText(
-                    text: 'Position ==> ${position.toString()}',
-                  ),
+                  child: load
+                      ? WidgetProgress()
+                      : GoogleMap(
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target:
+                                LatLng(position!.latitude, position!.longitude),
+                            zoom: 16,
+                          ),
+                          onMapCreated: (controller) {},
+                          onTap: (argument) {
+                            print(
+                                'tab ${argument.latitude} , ${argument.longitude}');
+                            MarkerId markerId = MarkerId('id');
+                            Marker marker = Marker(
+                              markerId: markerId,
+                              position: argument,
+                              infoWindow: const InfoWindow(
+                                  title: 'Job Position',
+                                  snippet: 'Work from here'),
+                                  icon: bitmapDescriptor ?? BitmapDescriptor.defaultMarkerWithHue(80),
+                              //icon: BitmapDescriptor.defaultMarkerWithHue(80),
+                            );
+                            markerMap[markerId] = marker;
+                            setState(() {});
+                          },
+                          markers: Set<Marker>.of(markerMap.values),
+                        ),
                 ),
               ),
             )
@@ -95,5 +124,15 @@ class _AddJobState extends State<AddJob> {
       load = false;
       setState(() {});
     });
+  }
+
+  void createIconMarker() {
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(size: Size(64, 64)), 'images/Home.png')
+        .then(
+      (value) {
+        bitmapDescriptor = value;
+      },
+    );
   }
 }
