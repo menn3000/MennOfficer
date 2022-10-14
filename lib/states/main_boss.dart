@@ -24,7 +24,7 @@ class MainBoss extends StatefulWidget {
 class _MainBossState extends State<MainBoss> {
   var bodys = <Widget>[];
   int indexBody = 0;
-  var title = <String>['List job','List Officer', 'News'];
+  var title = <String>['List job', 'List Officer', 'News'];
 
   var datas = <String>[];
 
@@ -62,11 +62,11 @@ class _MainBossState extends State<MainBoss> {
             const WidgetSignOut(),
             Column(
               children: [
-                WidgerDrawerHeader(
+                WidgetDrawerHeader(
                   datas: datas,
                   type: 'Boss',
                 ),
-                 WidgetListTile(
+                WidgetListTile(
                     tabFunc: () {
                       indexBody = 0;
                       Navigator.pop(context);
@@ -96,8 +96,6 @@ class _MainBossState extends State<MainBoss> {
                     title: title[2],
                     subTitle: 'News for you'),
                 Divider(color: MyConstant.dark),
-
-
               ],
             ),
           ],

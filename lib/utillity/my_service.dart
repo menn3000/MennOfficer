@@ -12,6 +12,14 @@ import 'package:mennofficer/widgets/widget_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyService {
+  String? changeDateFormat({required String dateStr}) {
+    String? result;
+    var strings = dateStr.split(' ');
+    var string2s = strings[0].trim().split('-');
+    result = '${string2s[2]}/${string2s[1]}/${string2s[0]}';
+    return result;
+  }
+
   Future<JobModel?> findJobWhereid({required String idJob}) async {
     JobModel? jobModel;
     String path =

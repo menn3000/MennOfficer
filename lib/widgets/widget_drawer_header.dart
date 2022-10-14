@@ -5,11 +5,11 @@ import '../utillity/my_constant.dart';
 import 'widget_image.dart';
 import 'widget_text.dart';
 
-class WidgerDrawerHeader extends StatelessWidget {
+class WidgetDrawerHeader extends StatelessWidget {
   final List<String> datas;
   final String type;
 
-  const WidgerDrawerHeader({
+  const WidgetDrawerHeader({
     Key? key,
     required this.datas,
     required this.type,
