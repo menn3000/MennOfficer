@@ -1,14 +1,29 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mennofficer/models/job_model.dart';
 import 'package:mennofficer/utillity/my_dialog.dart';
 import 'package:mennofficer/widgets/widget_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyService {
+  Future<JobModel?> findJobWhereid({required String idJob}) async {
+    JobModel? jobModel;
+    String path =
+        'https://www.androidthai.in.th/fluttertraining/getJobWhereIdMenn.php?isAdd=true&id=$idJob';
+    var result = await Dio().get(path);
+
+    for (var element in json.decode(result.data)) {
+      jobModel = JobModel.fromMap(element);
+    }
+    return jobModel;
+  }
+
   Future<Position?> processFindPosition({required BuildContext context}) async {
     bool locationServiceEnable = await Geolocator.isLocationServiceEnabled();
     LocationPermission locationPermission = await Geolocator.checkPermission();

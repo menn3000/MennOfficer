@@ -156,6 +156,7 @@ class _ListJobState extends State<ListJob> {
           ),
         ),
         Container(
+          margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(4),
           decoration: MyConstant().curvBox(),
           width: 300,
