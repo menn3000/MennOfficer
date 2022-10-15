@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mennofficer/models/job_model.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
 import 'package:mennofficer/utillity/my_service.dart';
+import 'package:mennofficer/widgets/widget_button.dart';
 import 'package:mennofficer/widgets/widget_icon_button.dart';
+import 'package:mennofficer/widgets/widget_image.dart';
 import 'package:mennofficer/widgets/widget_progress.dart';
 import 'package:mennofficer/widgets/widget_text.dart';
 
@@ -35,7 +40,10 @@ class _ListWorkState extends State<ListWork> {
   double? distance;
 
   String? distanceStr;
-  bool? work; // is in range
+  bool work = false; // is in range
+
+  File? file;
+  var files = <File>[];
 
   @override
   void initState() {
@@ -75,6 +83,9 @@ class _ListWorkState extends State<ListWork> {
                           },
                         ),
                       ),
+                      imageTakePhoto(boxConstraints: boxConstraints),
+                      gridImage(boxConstraints: boxConstraints),
+                      buttonFinishJob(boxConstraints: boxConstraints),
                     ],
                   ),
                 );
@@ -85,6 +96,99 @@ class _ListWorkState extends State<ListWork> {
                   textStyle: MyConstant().h1Style(),
                 ),
               );
+  }
+
+  Widget buttonFinishJob({required BoxConstraints boxConstraints}) {
+    return work
+        ? files.isNotEmpty
+            ? Container(
+                width: boxConstraints.maxWidth * 0.8,
+                margin: const EdgeInsets.symmetric(vertical: 16),
+                child: WidgetButton(
+                  lable: 'Finish job',
+                  pressFunc: () {
+                    processUpLoadAndEditData();
+                  },
+                ),
+              )
+            : const SizedBox()
+        : const SizedBox();
+  }
+
+  Widget gridImage({required BoxConstraints boxConstraints}) {
+    return work
+        ? files.isNotEmpty
+            ? GridView.builder(
+                shrinkWrap: true, // auto expand
+                physics: const ScrollPhysics(),
+                itemCount: files.length, // reserve memory
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
+                ), // column you need
+                itemBuilder: (context, index) => Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: MyConstant().curvBox(),
+                  width: boxConstraints.maxWidth * 0.33 - 10,
+                  height: boxConstraints.maxWidth * 0.33 - 10,
+                  child: InkWell(
+                    onTap: () {
+                      print('you tab grid index $index');
+                      file = files[index];
+                      setState(() {});
+                    },
+                    child: Image.file(
+                      files[index],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox()
+        : const SizedBox();
+  }
+
+  Widget imageTakePhoto({required BoxConstraints boxConstraints}) {
+    return work
+        ? Column(
+            children: [
+              WidgetText(
+                text: 'take photo',
+                textStyle: MyConstant().h2Style(size: 18),
+              ),
+              Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: MyConstant().curvBox(),
+                    width: boxConstraints.maxWidth * 0.8,
+                    height: boxConstraints.maxWidth * 0.8,
+                    child: file == null
+                        ? const WidgetImage(
+                            path: 'images/image.png',
+                          )
+                        : Image.file(
+                            file!,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    right: 0,
+                    child: WidgetIconButton(
+                      iconData: Icons.add_a_photo,
+                      pressFunc: () {
+                        processTakePhoto();
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          )
+        : const SizedBox();
   }
 
   Container showMap(BoxConstraints boxConstraints) {
@@ -223,5 +327,25 @@ class _ListWorkState extends State<ListWork> {
     mapCircle[circleIdOfficer] = circleOfficer;
 
     setState(() {});
+  }
+
+  Future<void> processTakePhoto() async {
+    var result = await ImagePicker()
+        .pickImage(source: ImageSource.camera, maxWidth: 800, maxHeight: 800);
+
+    if (result != null) {
+      file = File(result.path);
+      files.add(file!);
+      setState(() {});
+    } else {}
+  }
+
+  Future<void> processUpLoadAndEditData() async {
+    var datas = await MyService().findDatas();
+
+    for (var element in files) {
+      String nameFile = '${datas[3]}${Random().nextInt(1000000)}.jpg';
+      print('filename = $nameFile');
+    }
   }
 }
