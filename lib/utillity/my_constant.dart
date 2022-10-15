@@ -11,6 +11,8 @@ class MyConstant {
   static Color primary = Color.fromARGB(255, 2, 47, 77);
   static Color active = const Color.fromARGB(255, 247, 18, 94);
 
+  static double workDistance = 200; //Radius of working range
+
   //Method
 
   BoxDecoration curvBox() {
