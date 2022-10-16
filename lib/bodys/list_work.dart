@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -56,46 +58,54 @@ class _ListWorkState extends State<ListWork> {
     return load
         ? const WidgetProgress()
         : haveJob!
-            ? LayoutBuilder(builder: (context, BoxConstraints boxConstraints) {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      newTitle(boxConstraints,
-                          head: 'Job : ', value: jobModel!.job),
-                      newTitle(boxConstraints,
-                          head: 'Detail :', value: jobModel!.detail),
-                      newTitle(
-                        boxConstraints,
-                        head: 'Date :',
-                        value: MyService().changeDateFormat(
-                                dateStr: jobModel!.dateCreate) ??
-                            '',
-                      ),
-                      showMap(boxConstraints),
-                      newTitle(
-                        boxConstraints,
-                        head: 'Distance',
-                        value: distanceStr ?? '',
-                        widget: WidgetIconButton(
-                          iconData: Icons.refresh,
-                          pressFunc: () {
-                            findPosition();
-                          },
-                        ),
-                      ),
-                      imageTakePhoto(boxConstraints: boxConstraints),
-                      gridImage(boxConstraints: boxConstraints),
-                      buttonFinishJob(boxConstraints: boxConstraints),
-                    ],
-                  ),
-                );
-              })
+            ? jobModel == null
+                ? Center(
+                    child: WidgetText(
+                    text: 'Finish all jobs',
+                    textStyle: MyConstant().h1Style(),
+                  ))
+                : mainContent()
             : Center(
                 child: WidgetText(
                   text: 'No Job',
                   textStyle: MyConstant().h1Style(),
                 ),
               );
+  }
+
+  LayoutBuilder mainContent() {
+    return LayoutBuilder(builder: (context, BoxConstraints boxConstraints) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            newTitle(boxConstraints, head: 'Job : ', value: jobModel!.job),
+            newTitle(boxConstraints, head: 'Detail :', value: jobModel!.detail),
+            newTitle(
+              boxConstraints,
+              head: 'Date :',
+              value:
+                  MyService().changeDateFormat(dateStr: jobModel!.dateCreate) ??
+                      '',
+            ),
+            showMap(boxConstraints),
+            newTitle(
+              boxConstraints,
+              head: 'Distance',
+              value: distanceStr ?? '',
+              widget: WidgetIconButton(
+                iconData: Icons.refresh,
+                pressFunc: () {
+                  findPosition();
+                },
+              ),
+            ),
+            imageTakePhoto(boxConstraints: boxConstraints),
+            gridImage(boxConstraints: boxConstraints),
+            buttonFinishJob(boxConstraints: boxConstraints),
+          ],
+        ),
+      );
+    });
   }
 
   Widget buttonFinishJob({required BoxConstraints boxConstraints}) {
@@ -247,6 +257,11 @@ class _ListWorkState extends State<ListWork> {
   }
 
   Future<void> readMyJob() async {
+    if (jobModel != null) {
+      jobModel = null;
+      load = true;
+    }
+
     String path =
         'https://www.androidthai.in.th/fluttertraining/getJobWhereIdOfficerMenn.php?isAdd=true&idOfficer=${datas[0]}';
     await Dio().get(path).then((value) {
@@ -258,7 +273,10 @@ class _ListWorkState extends State<ListWork> {
       } else {
         haveJob = true;
         for (var element in json.decode(value.data)) {
-          jobModel = JobModel.fromMap(element);
+          var result = JobModel.fromMap(element);
+          if (result.status == 'assign') {
+            jobModel = result;
+          }
         }
       }
 
@@ -342,10 +360,29 @@ class _ListWorkState extends State<ListWork> {
 
   Future<void> processUpLoadAndEditData() async {
     var datas = await MyService().findDatas();
+    String path =
+        'https://www.androidthai.in.th/fluttertraining/saveFileMenn.php';
+
+    var images = <String>[];
 
     for (var element in files) {
       String nameFile = '${datas[3]}${Random().nextInt(1000000)}.jpg';
-      print('filename = $nameFile');
+
+      Map<String, dynamic> map = {};
+      map['file'] =
+          await MultipartFile.fromFile(element.path, filename: nameFile);
+      FormData formData = FormData.fromMap(map);
+      await Dio().post(path, data: formData).then((value) {
+        images.add(nameFile);
+      });
     }
+    print('images = $images');
+
+    String pathEditStatus =
+        'https://www.androidthai.in.th/fluttertraining/editJobStatusImagesWhereIdMenn.php?isAdd=true&id=${jobModel!.id}&images=${images.toString()}';
+
+    await Dio().get(pathEditStatus).then((value) {
+      readMyJob();
+    });
   }
 }

@@ -13,6 +13,9 @@ class MyConstant {
 
   static double workDistance = 200; //Radius of working range
 
+  static String domainImage =
+      'https://www.androidthai.in.th/fluttertraining/menn/';
+
   //Method
 
   BoxDecoration curvBox() {
