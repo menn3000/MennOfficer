@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mennofficer/bodys/my_job.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
+import 'package:mennofficer/utillity/my_dialog.dart';
 import 'package:mennofficer/utillity/my_service.dart';
 import 'package:mennofficer/widgets/widget_drawer_header.dart';
 import 'package:mennofficer/widgets/widget_icon_button.dart';
 import 'package:mennofficer/widgets/widget_listtile.dart';
 import 'package:mennofficer/widgets/widget_sign_out.dart';
+import 'package:qrscan/qrscan.dart';
 
 import '../widgets/widget_text.dart';
 
@@ -37,7 +39,11 @@ class _MainOfficerState extends State<MainOfficer> {
         actions: [
           WidgetIconButton(
             iconData: Icons.qr_code,
-            pressFunc: () {},
+            pressFunc: () async {
+              var result = await scan();
+              MyDialog(context: context)
+                  .normalDialog(title: 'QR Code', subTitle: result.toString());
+            },
           )
         ],
         centerTitle: true,
