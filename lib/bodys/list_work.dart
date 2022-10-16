@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mennofficer/models/job_model.dart';
+import 'package:mennofficer/models/user_model.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
 import 'package:mennofficer/utillity/my_service.dart';
 import 'package:mennofficer/widgets/widget_button.dart';
@@ -378,11 +379,37 @@ class _ListWorkState extends State<ListWork> {
     }
     print('images = $images');
 
-    String pathEditStatus =
-        'https://www.androidthai.in.th/fluttertraining/editJobStatusImagesWhereIdMenn.php?isAdd=true&id=${jobModel!.id}&images=${images.toString()}';
+    String apiGetUserWhereUser =
+        'https://www.androidthai.in.th/fluttertraining/getUserWhereUserMenn.php?isAdd=true&user=${datas[3]}';
 
-    await Dio().get(pathEditStatus).then((value) {
-      readMyJob();
+    var finish = <String>[];
+
+    await Dio().get(apiGetUserWhereUser).then((value) async {
+      for (var element in json.decode(value.data)) {
+        UserModel userModel = UserModel.fromMap(element);
+        if (userModel.finish!.isEmpty) {
+          finish.add(jobModel!.id!);
+        } else {
+          finish = MyService().changeStringToList(string: userModel.finish!);
+          print('before finishs $finish');
+
+          finish.add(jobModel!.id!);
+        }
+      }
+
+      print('last finish = $finish');
+
+      String apiEditFinish =
+          'https://www.androidthai.in.th/fluttertraining/editUserWhereIDFinishMenn.php?isAdd=true&id=${datas[0]}&finish=${finish.toString()}';
+
+      await Dio().get(apiEditFinish).then((value) async {
+        String pathEditStatus =
+            'https://www.androidthai.in.th/fluttertraining/editJobStatusImagesWhereIdMenn.php?isAdd=true&id=${jobModel!.id}&images=${images.toString()}';
+
+        await Dio().get(pathEditStatus).then((value) {
+          readMyJob();
+        });
+      });
     });
   }
 }

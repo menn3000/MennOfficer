@@ -13,6 +13,20 @@ import 'package:mennofficer/widgets/widget_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyService {
+  List<String> changeStringToList({required String string}) {
+    var strings = <String>[];
+
+    String result = string.substring(1, string.length - 1);
+
+    strings = result.split(',');
+
+    for (var i = 0; i < strings.length; i++) {
+      strings[i] = strings[i].trim();
+    }
+
+    return strings;
+  }
+
   double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
     double distance = 0;
 
