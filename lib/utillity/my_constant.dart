@@ -5,6 +5,7 @@ class MyConstant {
   static String routeAuthen = '/authen';
   static String routeoOfficer = '/officer';
   static String routeBoss = '/boss';
+  static String routeWeb = '/web';
 
   static String appName = 'Menn Officer';
   static Color dark = const Color.fromARGB(255, 4, 3, 73);

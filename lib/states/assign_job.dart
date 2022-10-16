@@ -9,6 +9,7 @@ import 'package:mennofficer/models/job_model.dart';
 import 'package:mennofficer/models/user_model.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
 import 'package:mennofficer/utillity/my_dialog.dart';
+import 'package:mennofficer/utillity/my_service.dart';
 import 'package:mennofficer/widgets/widget_button.dart';
 import 'package:mennofficer/widgets/widget_progress.dart';
 import 'package:mennofficer/widgets/widget_text.dart';
@@ -233,9 +234,19 @@ class _AssignJobState extends State<AssignJob> {
     await Dio().get(path).then((value) async {
       String pathEditUser =
           'https://www.androidthai.in.th/fluttertraining/editUserWhereIDMenn.php?isAdd=true&idJob=${jobModel!.id}&id=${assignedUserModel!.id}';
-      await Dio().get(pathEditUser).then((value) {
+      await Dio().get(pathEditUser).then((value) async {
         //Wait Notification
-        Navigator.pop(context);
+
+        await MyService()
+            .processSendNoti(
+                title: 'Have job requested',
+                body: jobModel!.detail,
+                token: assignedUserModel!.token!)
+            .then((value) {
+           Navigator.pop(context);
+        });
+
+      
       });
     });
   }

@@ -3,6 +3,7 @@ import 'package:mennofficer/bodys/my_job.dart';
 import 'package:mennofficer/utillity/my_constant.dart';
 import 'package:mennofficer/utillity/my_service.dart';
 import 'package:mennofficer/widgets/widget_drawer_header.dart';
+import 'package:mennofficer/widgets/widget_icon_button.dart';
 import 'package:mennofficer/widgets/widget_listtile.dart';
 import 'package:mennofficer/widgets/widget_sign_out.dart';
 
@@ -33,6 +34,12 @@ class _MainOfficerState extends State<MainOfficer> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        actions: [
+          WidgetIconButton(
+            iconData: Icons.qr_code,
+            pressFunc: () {},
+          )
+        ],
         centerTitle: true,
         title: WidgetText(text: titleAppBars[indexBody]),
       ),
@@ -72,7 +79,15 @@ class _MainOfficerState extends State<MainOfficer> {
   Future<void> findDatas() async {
     await MyService().findDatas().then((value) {
       datas = value;
+
+      //for noti (need to wait for datas for data)
+      aboutNoti();
+
       setState(() {});
     });
+  }
+
+  Future<void> aboutNoti() async {
+    await MyService().processNotification(context: context, idUser: datas[0]);
   }
 }

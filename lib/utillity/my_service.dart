@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mennofficer/models/job_model.dart';
@@ -13,6 +14,43 @@ import 'package:mennofficer/widgets/widget_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyService {
+  Future<void> processSendNoti(
+      {required String title,
+      required String body,
+      required String token}) async {
+    String apiNoti =
+        'https://www.androidthai.in.th/fluttertraining/apiNotiMenn.php?isAdd=true&token=$token&title=$title&body=$body';
+    await Dio().get(apiNoti).then((value) => print('sent noti success'),);
+  }
+
+  Future<void> processNotification(
+      {required BuildContext context, required String idUser}) async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    print('token = $token');
+
+    String apiUpdateToken =
+        'https://www.androidthai.in.th/fluttertraining/editUserWhereIDTokenMenn.php?isAdd=true&id=$idUser&token=$token';
+
+    await Dio()
+        .get(apiUpdateToken)
+        .then((value) => print('update token success'));
+
+    // when App open
+    FirebaseMessaging.onMessage.listen((event) {
+      String? title = event.notification!.title;
+      String? body = event.notification!.body;
+      MyDialog(context: context).normalDialog(title: title!, subTitle: body!);
+    });
+
+    //when App close
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      String? title = event.notification!.title;
+      String? body = event.notification!.body;
+      MyDialog(context: context).normalDialog(title: title!, subTitle: body!);
+    });
+  }
+
   List<String> changeStringToList({required String string}) {
     var strings = <String>[];
 

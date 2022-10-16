@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "326013677856",
+    "project_id": "mennofficer",
+    "storage_bucket": "mennofficer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326013677856:android:401aa0349b3ce55007a745",
+        "android_client_info": {
+          "package_name": "com.iberla.mennofficer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326013677856-el00sb18mm00i3rnrmn69ku0sk2icf2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO1VmHgzYxBm09VBUCgCRDcsIdFxX8nhU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326013677856-el00sb18mm00i3rnrmn69ku0sk2icf2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
